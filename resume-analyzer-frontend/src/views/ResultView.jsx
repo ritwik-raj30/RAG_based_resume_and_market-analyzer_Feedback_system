@@ -1,22 +1,42 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
 import { motion } from 'framer-motion';
-import { Info, CheckCircle, ExternalLink } from 'lucide-react';
+import { 
+  Info, 
+  CheckCircle, 
+  ExternalLink, 
+  Sparkles, 
+  Building2, 
+  Brain, 
+  Target 
+} from 'lucide-react';
 
 const ResultView = () => {
   const location = useLocation();
   const resultData = location.state;
-  const { logout, authUser } = useAuthStore();
 
   const hybridScore = resultData?.hybridScore ?? resultData?.scores?.hybridScore ?? 0;
   const skillScore = resultData?.skillScore ?? resultData?.scores?.skillScore ?? null;
   const bertScore = resultData?.bertScore ?? resultData?.scores?.bertScore ?? null;
+  const tfidfScore = resultData?.tfidfScore ?? resultData?.scores?.tfidfScore ?? null;
 
+  // Extract RAG data
+  const ragData = resultData?.ragData || {};
+  const ragEnabled = ragData?.ragEnabled || false;
+  const feedbackType = resultData?.aiFeedback?.feedbackType || 'Rule-Based';
+  const companyName = resultData?.companyName || 'N/A';
+  const companyUrl = resultData?.companyUrl || null;
+
+  // NEW FIELD → strict validation flag
+  const strictValidation = resultData?.strictValidation ?? false;
+
+  // Process AI Feedback
   let aiFeedback = '';
   if (resultData?.aiFeedback) {
     if (typeof resultData.aiFeedback === 'object' && resultData.aiFeedback.feedback) {
-      aiFeedback = resultData.aiFeedback.feedback.join('. ');
+      aiFeedback = Array.isArray(resultData.aiFeedback.feedback)
+        ? resultData.aiFeedback.feedback.join('. ')
+        : resultData.aiFeedback.feedback;
     } else if (Array.isArray(resultData.aiFeedback)) {
       aiFeedback = resultData.aiFeedback.join('. ');
     } else if (typeof resultData.aiFeedback === 'string') {
@@ -26,145 +46,244 @@ const ResultView = () => {
 
   const aiFeedbackList = aiFeedback
     ? aiFeedback
-        .split(/(?<=[.?!])\s+(?=[A-Z])/)
-        .filter((item) => item.trim().length > 0)
+        .split(/\d+\.\s*\*\*|\*\*\d+\.\s*|\n\d+\.\s*|(?<=\.)\s*\*\*/)
+        .map(item => item.replace(/\*\*/g, '').trim())
+        .filter(item => item.length > 10)
     : [];
 
   let feedbackText = '';
   let scoreColor = 'text-gray-600';
+  let scoreGradient = 'from-gray-400 to-gray-500';
+
   if (hybridScore <= 40) {
     feedbackText = 'Poor Match';
     scoreColor = 'text-red-600';
+    scoreGradient = 'from-red-500 to-rose-600';
   } else if (hybridScore <= 55) {
     feedbackText = 'Average Match';
     scoreColor = 'text-yellow-600';
+    scoreGradient = 'from-yellow-500 to-amber-600';
   } else if (hybridScore <= 80) {
     feedbackText = 'Above Average Match';
     scoreColor = 'text-blue-600';
+    scoreGradient = 'from-blue-500 to-indigo-600';
   } else {
     feedbackText = 'Excellent Match';
     scoreColor = 'text-green-700';
+    scoreGradient = 'from-emerald-500 to-teal-600';
   }
 
   if (!resultData) {
-    return <div className="text-center text-red-600 font-bold mt-16">No result data found.</div>;
+    return (
+      <div className="text-center text-red-600 font-bold mt-16">
+        No result data found.
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-tr from-lime-100 to-green-50 font-sans">
-      {/* LEFT SIDE - Explanation */}
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50 font-sans">
+
+      {/* LEFT SIDE - Explanation Panel */}
       <motion.div
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="flex-1 flex items-center justify-center p-8 bg-white/80 backdrop-blur-lg shadow-inner"
+        className="lg:w-[45%] lg:fixed lg:left-0 lg:top-0 lg:h-screen overflow-y-auto p-8 bg-white/90 backdrop-blur-lg shadow-lg"
       >
-        <div className="max-w-xl w-full space-y-6">
-          <h2 className="text-3xl font-bold text-green-900">Evaluation Criteria</h2>
-          <div className="space-y-4 text-sm text-green-900">
-            <div>
-              <p className="flex gap-2 items-start">
-                <Info className="w-5 h-5 mt-1 text-green-700" />
-                <span>
-                  <strong>Skill Matching (40%):</strong> Measures how many job-relevant skills your resume includes.
-                </span>
-              </p>
+        <div className="max-w-xl mx-auto space-y-6">
+
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-3 rounded-xl shadow-lg">
+              <Brain className="w-6 h-6 text-white" />
             </div>
-            <div>
-              <p className="flex gap-2 items-start">
-                <Info className="w-5 h-5 mt-1 text-green-700" />
-                <span>
-                  <strong>TF-IDF Similarity (30%):</strong> Identifies important and unique terms relevant to the job post.
-                </span>
-              </p>
-              <p className="text-xs text-gray-700 ml-7">
-                🔍 Helps emphasize what makes your resume stand out.
-              </p>
-            </div>
-            <div>
-              <p className="flex gap-2 items-start">
-                <Info className="w-5 h-5 mt-1 text-green-700" />
-                <span>
-                  <strong>BERT Score (30%):</strong> Evaluates how well the *meaning* of your resume matches the job using advanced NLP.
-                </span>
-              </p>
-              <p className="text-xs text-gray-700 ml-7">
-                🤖 BERT understands the *context* beyond keywords — like a human recruiter would.
-              </p>
-            </div>
-            <p className="pt-2 text-green-800 text-sm">
-              All these metrics are weighted and combined to form your final match score.
-            </p>
+            <h2 className="text-3xl font-bold text-gray-900">
+              How We Evaluate
+            </h2>
           </div>
+
+          <div className="space-y-4 text-sm text-gray-800">
+
+            <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+              <p className="flex gap-2 items-start">
+                <Target className="w-5 h-5 mt-1 text-blue-600" />
+                <span>
+                  <strong className="text-blue-900">Skill Matching (40%):</strong> 
+                  Measures how many job-relevant skills your resume includes.
+                </span>
+              </p>
+            </div>
+
+            <div className="p-4 bg-purple-50 border-l-4 border-purple-500 rounded-lg">
+              <p className="flex gap-2 items-start">
+                <Info className="w-5 h-5 mt-1 text-purple-600" />
+                <span>
+                  <strong className="text-purple-900">TF-IDF (30%):</strong> 
+                  Identifies important and unique terms relevant to the job.
+                </span>
+              </p>
+            </div>
+
+            <div className="p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-lg">
+              <p className="flex gap-2 items-start">
+                <Brain className="w-5 h-5 mt-1 text-emerald-600" />
+                <span>
+                  <strong className="text-emerald-900">BERT Score (30%):</strong> 
+                  Measures semantic meaning match between resume & job.
+                </span>
+              </p>
+            </div>
+
+            {ragEnabled && (
+              <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-lg">
+                <p className="flex gap-2 items-start">
+                  <Sparkles className="w-5 h-5 mt-1 text-amber-600" />
+                  <span>
+                    <strong className="text-amber-900">RAG Enhanced:</strong> 
+                  rag-ai analysis used Retrieval-Augmented Generation for deeper, context-aware feedback powered by LLM.
+                  using the Jd, resume , and company info as context.
+                  </span>
+                </p>
+              </div>
+            )}
+
+          </div>
+
         </div>
       </motion.div>
 
-      {/* RIGHT SIDE - Result */}
+      {/* RIGHT SIDE - Results */}
       <motion.div
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="flex-1 flex items-center justify-center p-8 bg-white"
+        className="lg:ml-[45%] lg:w-[55%] w-full min-h-screen overflow-y-auto p-8 bg-gradient-to-br from-gray-50 to-white"
       >
-        <div className="max-w-xl w-full space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-3xl font-bold text-green-900">Your Resume Match</h2>
-            {authUser && (
-              <button
-                onClick={logout}
-                className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-green-700 transition"
-              >
-                Logout
-              </button>
+        <div className="max-w-2xl mx-auto space-y-6 pb-12">
+
+          {/* Header */}
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">Your Resume Match</h2>
+            {ragEnabled && (
+              <p className="text-sm text-amber-600 font-semibold flex items-center gap-1 mt-1">
+                <Sparkles className="w-4 h-4" />
+                {feedbackType} Analysis
+              </p>
             )}
           </div>
 
-          <div className="space-y-2 text-sm text-gray-800">
-            <div>
-              <strong>Skill Score:</strong>{' '}
-              <span className="text-green-700 font-bold text-lg">{Math.round(skillScore)}</span>
+          {/* Company Section */}
+          {companyName !== 'N/A' && (
+            <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <Building2 className="w-5 h-5 text-blue-600" />
+                <span className="font-semibold text-gray-900">Target Company</span>
+              </div>
+              <p className="text-gray-800 font-medium">{companyName}</p>
+
+              {companyUrl && companyUrl !== 'N/A' && (
+                <a
+                  href={companyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm mt-1"
+                >
+                  Visit Website <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
             </div>
-            <div>
-              <strong>BERT Score:</strong>{' '}
-              <span className="text-green-700 font-bold text-lg">{Math.round(bertScore)}</span>
+          )}
+
+          {/* Score Section */}
+          <div className="space-y-3">
+
+            <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+              <p className="text-sm text-gray-600 mb-1">Skill Match Score</p>
+              <p className="text-3xl font-bold text-blue-700">
+                {Math.round(skillScore)}%
+              </p>
             </div>
-            <div>
-              <strong>Final Score:</strong>{' '}
-              <span className={`font-bold text-lg ${scoreColor}`}>{Math.round(hybridScore)}</span>
-              <span className="ml-2 text-gray-700">– {feedbackText}</span>
+
+            <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+              <p className="text-sm text-gray-600 mb-1">BERT Semantic Score</p>
+              <p className="text-3xl font-bold text-purple-700">
+                {Math.round(bertScore)}%
+              </p>
             </div>
+
+            <div className="p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl border border-amber-200">
+              <p className="text-sm text-gray-600 mb-1">TF-IDF Score</p>
+              <p className="text-3xl font-bold text-amber-700">
+                {Math.round(tfidfScore)}%
+              </p>
+            </div>
+
+            {/* OVERALL SCORE BOX WITH STRICT VALIDATION BADGE */}
+            <div className={`p-6 bg-gradient-to-r ${scoreGradient} rounded-xl shadow-lg text-white`}>
+              <p className="text-sm opacity-90 mb-1">Overall Match Score</p>
+
+              <div className="flex items-baseline gap-3">
+                <p className="text-5xl font-bold">{Math.round(hybridScore)}%</p>
+                <p className="text-lg font-semibold opacity-90">– {feedbackText}</p>
+              </div>
+
+              {/* ✔️ STRICT VALIDATION BADGE */}
+              {strictValidation && (
+                <p className="text-sm font-semibold bg-white/20 text-red-200 px-3 py-1 rounded-md inline-block mt-3">
+                  ⚠️ Strict Validation Enabled
+                </p>
+              )}
+            </div>
+
           </div>
 
-          <div>
-            <strong>AI Suggestions:</strong>
-            <ul className="bg-green-50 rounded-md p-4 mt-2 text-sm text-gray-800 space-y-2 list-disc list-inside">
+          {/* AI FEEDBACK */}
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-5 shadow-md">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              <strong className="text-gray-900 text-lg">AI-Generated Insights</strong>
+            </div>
+
+            <div className="space-y-3">
               {aiFeedbackList.length > 0 ? (
                 aiFeedbackList.map((point, index) => (
-                  <li key={index}>{point.trim()}</li>
+                  <div
+                    key={index}
+                    className="flex gap-3 p-4 bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg border border-gray-200 hover:border-blue-300 transition"
+                  >
+                    <CheckCircle className="w-5 h-5 text-emerald-600 mt-0.5" />
+                    <p className="text-sm text-gray-800">{point}</p>
+                  </div>
                 ))
               ) : (
-                <li className="italic text-gray-500">No AI suggestions available.</li>
+                <p className="italic text-gray-500 text-center py-4">
+                  No AI suggestions available.
+                </p>
               )}
-            </ul>
+            </div>
           </div>
 
-          <div>
-            <strong>Google Drive Link:</strong>{' '}
-            {resultData?.driveUrl ? (
+          {/* Resume Source */}
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+            <strong className="text-gray-700 text-sm">Resume Source:</strong>
+
+            {resultData?.driveUrl && resultData.driveUrl !== 'NULL' ? (
               <a
                 href={resultData.driveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-green-700 underline font-semibold"
+                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 ml-2 text-sm"
               >
-                {resultData.driveUrl.slice(0, 45)}... <ExternalLink className="w-4 h-4" />
+                View on Drive <ExternalLink className="w-4 h-4" />
               </a>
             ) : (
-              <span className="text-gray-500">N/A</span>
+              <span className="text-gray-500 ml-2 text-sm">Uploaded directly</span>
             )}
           </div>
+
         </div>
       </motion.div>
+
     </div>
   );
 };

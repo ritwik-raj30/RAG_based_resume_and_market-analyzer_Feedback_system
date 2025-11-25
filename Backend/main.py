@@ -4,6 +4,7 @@ from auth import router as auth_router
 from getData import router as data_router
 from hr_matches import router as hr_router
 from uploads import router as resume_router
+from market_analysis.router import router as market_router  # ✅ Add this
 
 app = FastAPI()
 
@@ -33,6 +34,7 @@ async def health_check():
     }
 
 app.include_router(auth_router, prefix="/auth")
-app.include_router(resume_router,prefix="/resume")
+app.include_router(resume_router, prefix="/resume")
 app.include_router(data_router, prefix="/getme")
 app.include_router(hr_router, prefix="/hr")
+app.include_router(market_router, prefix="/market")  # ✅ Add this
