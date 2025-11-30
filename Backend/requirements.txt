@@ -1,14 +1,30 @@
 fastapi
 uvicorn[standard]
+
 python-dotenv
 pymongo[srv]==3.11
 motor
+
 passlib[bcrypt]
 python-jose
+
 spacy
-PyMuPDF
+PyMuPDF           # fitz
 scikit-learn
-cloudinary
 requests
 python-multipart
+cloudinary
+
 sentence-transformers
+faiss-cpu
+torch
+numpy
+pydantic
+
+beautifulsoup4
+groq
+python-dateutil
+
+# Extra dependencies inferred from your code
+bs4
+bcrypt
