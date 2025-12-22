@@ -9,6 +9,7 @@ A comprehensive resume analysis and matching system that helps HR professionals 
 - Get detailed feedback and improvement suggestions
 - Track analysis history
 - View skill matching scores
+- MARKET ANALYSIS - uses google serp api to get job data  leverage RAG to provide market insights 
 
 ### For HR Professionals
 - Find the best matching resumes for job descriptions
