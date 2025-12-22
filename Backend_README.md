@@ -304,8 +304,7 @@ Create a `.env` file in the Backend directory:
 
 ```env
 # MongoDB Configuration
-MONGODB_URI=mongodb://localhost:27017/resume_db
-# Or MongoDB Atlas: mongodb+srv://user:password@cluster.mongodb.net/resume_db
+MONGODB_URI=your url ....
 
 # JWT Configuration
 JWT_SECRET=your-secret-key-here-change-in-production
@@ -313,9 +312,9 @@ JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 # Cloudinary Configuration (for file uploads)
-CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
+CLOUDINARY_URL=cloudinary://api_key.....
 
-# Groq API (for LLM feedback)
+
 GROQ_API_KEY=your-groq-api-key
 
 # Optional: Market Analysis
