@@ -62,7 +62,7 @@ A comprehensive resume analysis and matching system that helps HR professionals 
 4. **Create environment file:**
    Create a `.env` file in the Backend directory:
    ```
-   MONGODB_URI=mongodb://localhost:27017/resume_db
+   MONGODB_URI=mongodb uri goes here 
    JWT_SECRET_KEY=your-secret-key-here
    JWT_ALGORITHM=HS256
    ACCESS_TOKEN_EXPIRE_MINUTES=30
@@ -170,28 +170,9 @@ The system uses a hybrid scoring approach combining three algorithms:
 - **"Backend connection failed"** - Check if server is running on port 8000
 - **"Server error"** - Verify all dependencies are installed
 
-## Development
 
-### Project Structure
-```
-resume-matcher-optimizer-tracker/
-├── Backend/
-│   ├── main.py              # FastAPI app entry point
-│   ├── hr_matches.py        # HR dashboard API
-│   ├── calculation.py       # AI analysis algorithms
-│   ├── database.py          # MongoDB configuration
-│   ├── auth.py              # Authentication endpoints
-│   ├── uploads.py           # Resume upload handling
-│   └── requirements.txt     # Python dependencies
-└── resume-analyzer-frontend/
-    ├── src/
-    │   ├── views/
-    │   │   └── HRDashboard.jsx  # HR dashboard component
-    │   ├── components/
-    │   ├── store/
-    │   └── lib/
-    └── package.json         # Node.js dependencies
-```
+
+
 
 ### Contributing
 1. Fork the repository
