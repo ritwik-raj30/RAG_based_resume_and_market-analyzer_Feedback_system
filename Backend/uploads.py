@@ -137,6 +137,10 @@ from utils import upload_pdf_to_cloudinary
 from calculation import analyze_resume_against_jd
 from ai_feedback import generate_feedback
 from auth_utils import get_current_user
+from ml_executor import execute_ml_work
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -149,11 +153,11 @@ async def upload_and_analyze_resume(
     company_url: Optional[str] = Form(None),   # 🆕 NEW: Company website URL
     user=Depends(get_current_user),
 ):
-    print("📩 Received request from user:", user["email"])
-    print("📎 File uploaded:", bool(file))
-    print("🔗 Drive URL received:", drive_url)
-    print("🏢 Company Name:", company_name)
-    print("🌐 Company URL:", company_url)
+    logger.info(f"📩 Received request from user: {user['email']}")
+    logger.info(f"📎 File uploaded: {bool(file)}")
+    logger.info(f"🔗 Drive URL received: {drive_url}")
+    logger.info(f"🏢 Company Name: {company_name}")
+    logger.info(f"🌐 Company URL: {company_url}")
 
     if not file and not drive_url:
         raise HTTPException(status_code=400, detail="Please upload a resume or provide a Google Drive link.")
@@ -164,12 +168,12 @@ async def upload_and_analyze_resume(
         if file:
             if file.content_type != "application/pdf":
                 raise HTTPException(status_code=400, detail="Only PDF files are supported.")
-            print("📤 Uploading to Cloudinary...")
+            logger.info("📤 Uploading to Cloudinary...")
             resume_url = upload_pdf_to_cloudinary(file.file)
-            print("✅ Uploaded to:", resume_url)
+            logger.info(f"✅ Uploaded to: {resume_url}")
         else:
             resume_url = drive_url.strip()
-            print("✅ Using provided Google Drive link:", resume_url)
+            logger.info(f"✅ Using provided Google Drive link: {resume_url}")
 
         # Store resume document
         resume_doc = {
@@ -191,24 +195,30 @@ async def upload_and_analyze_resume(
         result = resume_collection.insert_one(resume_doc)
         resume_id = str(result.inserted_id)
 
-        # 🚀 Perform RAG-enhanced analysis
-        analysis = analyze_resume_against_jd(
+        # 🚀 Perform RAG-enhanced analysis in ThreadPool (NON-BLOCKING)
+        logger.info("🚀 Starting ML analysis in background thread...")
+        analysis = await execute_ml_work(
+            analyze_resume_against_jd,
             resume_url=resume_url,
             jd_text=jd_text,
-            company_name=company_name,  # 🆕 Pass company name
-            company_url=company_url      # 🆕 Pass company URL
+            company_name=company_name,
+            company_url=company_url
         )
+        logger.info("✅ ML analysis completed")
         
         # Add JD text to analysis for feedback generation
         analysis["jdText"] = jd_text
         
         resume_text = analysis.get("resumeText", "")
 
-        # 🤖 Generate AI feedback (LLM or rule-based)
-        feedback = generate_feedback(
+        # 🤖 Generate AI feedback in ThreadPool (NON-BLOCKING)
+        logger.info("🤖 Generating AI feedback in background thread...")
+        feedback = await execute_ml_work(
+            generate_feedback,
             resume_text=resume_text,
             analysis_results=analysis
         )
+        logger.info("✅ AI feedback generated")
 
         analysis["aiFeedback"] = feedback
 
@@ -238,12 +248,12 @@ async def upload_and_analyze_resume(
         }
 
     except Exception as e:
-        print("❌ Error during resume analysis:", str(e))
+        logger.error(f"❌ Error during resume analysis: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/guest-analyze")
-def analyze_guest_resume():
+async def analyze_guest_resume():
     try:
         resume_url = "https://res.cloudinary.com/dloh7csm6/raw/upload/v1752328644/bbaexcathzjznjeixvo5.pdf"
 
@@ -256,22 +266,29 @@ def analyze_guest_resume():
         algorithms, and cloud platforms (e.g., AWS) is a plus. Strong problem-solving skills and the ability to work in cross-functional teams are essential.
         """
 
-        # 🚀 Analyze with RAG (no company info for guest)
-        analysis = analyze_resume_against_jd(
+        # 🚀 Analyze with RAG (no company info for guest) in ThreadPool
+        logger.info("🚀 Starting guest resume analysis in background thread...")
+        analysis = await execute_ml_work(
+            analyze_resume_against_jd,
             resume_url=resume_url,
             jd_text=jd_text,
             company_name=None,
             company_url=None
         )
+        logger.info("✅ Guest resume analysis completed")
         
         analysis["jdText"] = jd_text
         resume_text = analysis.get("resumeText", "")
 
-        # Generate feedback
-        feedback = generate_feedback(
+        # Generate feedback in ThreadPool
+        logger.info("🤖 Generating guest feedback in background thread...")
+        feedback = await execute_ml_work(
+            generate_feedback,
             resume_text=resume_text,
             analysis_results=analysis
         )
+        logger.info("✅ Guest feedback generated")
+        
         analysis["aiFeedback"] = feedback
 
         return {
@@ -281,4 +298,5 @@ def analyze_guest_resume():
         }
 
     except Exception as e:
+        logger.error(f"❌ Error analyzing guest resume: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Error analyzing guest resume: {str(e)}")

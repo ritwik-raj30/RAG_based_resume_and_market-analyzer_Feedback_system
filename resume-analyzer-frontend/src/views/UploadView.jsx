@@ -172,8 +172,8 @@ const UploadView = () => {
       const file = new File([blob], 'demo_resume.pdf', { type: 'application/pdf' });
       setResumeFile(file);
       setJobDescription(demoJD);
-      setCompanyName('TechCorp Inc.');
-      setCompanyUrl('https://techcorp.example.com');
+      setCompanyName('netflix');
+      setCompanyUrl('https://explore.jobs.netflix.net/careers');
       toast.success('Demo resume and JD loaded!');
     } catch (err) {
       console.error('demo load error', err);

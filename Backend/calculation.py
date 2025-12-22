@@ -13,20 +13,24 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from spacy.matcher import PhraseMatcher
 from sentence_transformers import SentenceTransformer
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Load spaCy NLP model
 try:
     nlp = spacy.load("en_core_web_sm")
+    logger.info("✅ spaCy model loaded")
 except OSError:
-    print("⚠️ spaCy model not found. Please run: python -m spacy download en_core_web_sm")
+    logger.warning("⚠️ spaCy model not found. Please run: python -m spacy download en_core_web_sm")
     nlp = None
 
 # Load BERT model for RAG
 try:
     bert_model = SentenceTransformer("all-MiniLM-L6-v2")
-    print("✅ BERT model loaded for RAG")
+    logger.info("✅ BERT model loaded for RAG")
 except Exception as e:
-    print(f"⚠️ BERT model loading failed: {e}")
+    logger.error(f"⚠️ BERT model loading failed: {e}")
     bert_model = None
 
 # # Hugging Face API Token
@@ -118,7 +122,7 @@ def bert_similarity(t1, t2):
         return 0.0
     
     if not bert_model:
-        print("⚠️ BERT model not available, returning 0")
+        logger.warning("⚠️ BERT model not available, returning 0")
         return 0.0
     
     try:
@@ -133,11 +137,11 @@ def bert_similarity(t1, t2):
         similarity = dot(emb1, emb2) / (norm(emb1) * norm(emb2))
         score = float(similarity) * 100
         
-        print(f"✅ BERT similarity (local): {score:.2f}%")
+        logger.info(f"✅ BERT similarity (local): {score:.2f}%")
         return score
         
     except Exception as e:
-        print(f"❌ Local BERT similarity failed: {e}")
+        logger.error(f"❌ Local BERT similarity failed: {e}")
         return 0.0
 
 # -------------------------
@@ -160,7 +164,7 @@ def hybrid_score(skill_score, tfidf_score, bert_score, weights=(0.5, 0.2, 0.3)):
 def build_faiss_index(chunks):
     """Build FAISS index from text chunks using BERT embeddings"""
     if not bert_model:
-        print("⚠️ BERT model not available for RAG")
+        logger.warning("⚠️ BERT model not available for RAG")
         return None, None
     
     try:
@@ -168,10 +172,10 @@ def build_faiss_index(chunks):
         d = embeddings.shape[1]
         index = faiss.IndexFlatL2(d)
         index.add(embeddings)
-        print(f"✅ FAISS index built with {len(chunks)} chunks")
+        logger.info(f"✅ FAISS index built with {len(chunks)} chunks")
         return index, embeddings
     except Exception as e:
-        print(f"❌ FAISS indexing failed: {e}")
+        logger.error(f"❌ FAISS indexing failed: {e}")
         return None, None
 
 # -------------------------
@@ -187,7 +191,7 @@ def retrieve_top_chunks(index, chunks, query_text, top_k=3):
         D, I = index.search(query_emb, k=min(top_k, len(chunks)))
         return [chunks[i] for i in I[0]]
     except Exception as e:
-        print(f"❌ RAG retrieval failed: {e}")
+        logger.error(f"❌ RAG retrieval failed: {e}")
         return chunks[:top_k]
 
 # -------------------------
@@ -217,11 +221,11 @@ def scrape_company_info(company_url):
                 text_content.append(text)
         
         company_info = " ".join(text_content[:50])  # Limit to first 50 paragraphs
-        print(f"✅ Scraped {len(company_info)} chars from {company_url}")
+        logger.info(f"✅ Scraped {len(company_info)} chars from {company_url}")
         return company_info
     
     except Exception as e:
-        print(f"⚠️ Company scraping failed: {e}")
+        logger.warning(f"⚠️ Company scraping failed: {e}")
         return ""
 
 # -------------------------
@@ -262,7 +266,7 @@ def analyze_resume_against_jd(resume_url, jd_text, company_name=None, company_ur
                 top_chunks = retrieve_top_chunks(index, resume_chunks, jd_text, top_k=3)
                 rag_data["topChunks"] = top_chunks
                 rag_data["ragEnabled"] = True
-                print(f"✅ RAG enabled: Retrieved {len(top_chunks)} relevant chunks")
+                logger.info(f"✅ RAG enabled: Retrieved {len(top_chunks)} relevant chunks")
 
         # Scrape company website if URL provided
         if company_url:
@@ -287,7 +291,7 @@ def analyze_resume_against_jd(resume_url, jd_text, company_name=None, company_ur
         }
 
     except Exception as e:
-        print(f"❌ Error in analysis: {e}")
+        logger.error(f"❌ Error in analysis: {e}")
         return {
             "resumeText": "",
             "resumeSkills": [], "jdSkills": [], "matchedSkills": [], "missingSkills": [],

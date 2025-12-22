@@ -1,0 +1,47 @@
+2025-12-21 19:29:43 - root - INFO - <module>:8 - Test log message
+2025-12-21 19:29:45 - database - INFO - _connect:59 - ✅ MongoDB connection established successfully
+2025-12-21 19:29:51 - faiss.loader - INFO - <module>:86 - Loading faiss with AVX2 support.
+2025-12-21 19:29:51 - faiss.loader - INFO - <module>:88 - Successfully loaded faiss with AVX2 support.
+2025-12-21 19:29:55 - calculation - INFO - <module>:23 - ✅ spaCy model loaded
+2025-12-21 19:29:55 - sentence_transformers.SentenceTransformer - INFO - __init__:208 - Use pytorch device_name: cpu
+2025-12-21 19:29:55 - sentence_transformers.SentenceTransformer - INFO - __init__:216 - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-21 19:29:58 - calculation - INFO - <module>:31 - ✅ BERT model loaded for RAG
+2025-12-21 19:34:22 - root - INFO - startup_event:35 - 🚀 Starting Resume Analyzer Backend...
+2025-12-21 19:34:22 - root - INFO - startup_event:40 - ✅ Database connection initialized and tested
+2025-12-21 19:34:22 - root - INFO - startup_event:44 - ✅ ML ThreadPoolExecutor ready
+2025-12-21 19:34:22 - root - INFO - startup_event:45 - ✅ Application startup complete
+2025-12-21 19:38:27 - passlib.handlers.bcrypt - WARNING - _load_backend_mixin:622 - (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/cns_lord/.local/lib/python3.8/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-12-21 19:38:42 - uploads - INFO - upload_and_analyze_resume:156 - 📩 Received request from user: demo@resume.ai
+2025-12-21 19:38:42 - uploads - INFO - upload_and_analyze_resume:157 - 📎 File uploaded: True
+2025-12-21 19:38:42 - uploads - INFO - upload_and_analyze_resume:158 - 🔗 Drive URL received: 
+2025-12-21 19:38:42 - uploads - INFO - upload_and_analyze_resume:159 - 🏢 Company Name: netflix
+2025-12-21 19:38:42 - uploads - INFO - upload_and_analyze_resume:160 - 🌐 Company URL: https://explore.jobs.netflix.net/careers
+2025-12-21 19:38:42 - uploads - INFO - upload_and_analyze_resume:171 - 📤 Uploading to Cloudinary...
+2025-12-21 19:38:44 - uploads - INFO - upload_and_analyze_resume:173 - ✅ Uploaded to: https://res.cloudinary.com/dloh7csm6/raw/upload/v1766326124/qhvktdjpm7igkegskcnl
+2025-12-21 19:38:44 - uploads - INFO - upload_and_analyze_resume:199 - 🚀 Starting ML analysis in background thread...
+2025-12-21 19:38:46 - calculation - INFO - bert_similarity:140 - ✅ BERT similarity (local): 20.60%
+2025-12-21 19:38:46 - calculation - INFO - build_faiss_index:175 - ✅ FAISS index built with 6 chunks
+2025-12-21 19:38:46 - calculation - INFO - analyze_resume_against_jd:269 - ✅ RAG enabled: Retrieved 3 relevant chunks
+2025-12-21 19:38:48 - calculation - INFO - scrape_company_info:224 - ✅ Scraped 0 chars from https://explore.jobs.netflix.net/careers
+2025-12-21 19:38:48 - uploads - INFO - upload_and_analyze_resume:207 - ✅ ML analysis completed
+2025-12-21 19:38:48 - uploads - INFO - upload_and_analyze_resume:215 - 🤖 Generating AI feedback in background thread...
+2025-12-21 19:38:49 - uploads - INFO - upload_and_analyze_resume:221 - ✅ AI feedback generated
+2025-12-21 19:57:32 - uploads - INFO - upload_and_analyze_resume:156 - 📩 Received request from user: demo@resume.ai
+2025-12-21 19:57:32 - uploads - INFO - upload_and_analyze_resume:157 - 📎 File uploaded: True
+2025-12-21 19:57:32 - uploads - INFO - upload_and_analyze_resume:158 - 🔗 Drive URL received: 
+2025-12-21 19:57:32 - uploads - INFO - upload_and_analyze_resume:159 - 🏢 Company Name: netflix
+2025-12-21 19:57:32 - uploads - INFO - upload_and_analyze_resume:160 - 🌐 Company URL: https://explore.jobs.netflix.net/careers
+2025-12-21 19:57:32 - uploads - INFO - upload_and_analyze_resume:171 - 📤 Uploading to Cloudinary...
+2025-12-21 19:57:35 - uploads - INFO - upload_and_analyze_resume:173 - ✅ Uploaded to: https://res.cloudinary.com/dloh7csm6/raw/upload/v1766327255/mcpuqssx8zhhygflg1x2
+2025-12-21 19:57:35 - uploads - INFO - upload_and_analyze_resume:199 - 🚀 Starting ML analysis in background thread...
+2025-12-21 19:57:36 - calculation - INFO - bert_similarity:140 - ✅ BERT similarity (local): 20.60%
+2025-12-21 19:57:36 - calculation - INFO - build_faiss_index:175 - ✅ FAISS index built with 6 chunks
+2025-12-21 19:57:36 - calculation - INFO - analyze_resume_against_jd:269 - ✅ RAG enabled: Retrieved 3 relevant chunks
+2025-12-21 19:57:37 - calculation - INFO - scrape_company_info:224 - ✅ Scraped 0 chars from https://explore.jobs.netflix.net/careers
+2025-12-21 19:57:37 - uploads - INFO - upload_and_analyze_resume:207 - ✅ ML analysis completed
+2025-12-21 19:57:37 - uploads - INFO - upload_and_analyze_resume:215 - 🤖 Generating AI feedback in background thread...
+2025-12-21 19:57:39 - uploads - INFO - upload_and_analyze_resume:221 - ✅ AI feedback generated
