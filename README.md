@@ -1,143 +1,115 @@
-An AI-powered resume analysis and matching system designed to help job seekers improve resumes and HR professionals find the best candidates efficiently using modern NLP and ML techniques.
+# 📄 **Resume Matcher Optimizer Tracker**
 
-🚀 Overview
+An **AI-powered resume analysis and matching system** built to help **job seekers improve resumes** and **HR professionals identify the best candidates** using **modern NLP, ML, and scalable backend architecture**.
 
-Resume Matcher Optimizer Tracker analyzes resumes, extracts skills, evaluates semantic relevance, and ranks candidates against job descriptions using a hybrid AI scoring system.
+---
 
-The platform supports:
+## 🚀 **Overview**
 
-Resume analysis & feedback for job seekers
+**Resume Matcher Optimizer Tracker** analyzes resumes, extracts skills, evaluates semantic relevance, and ranks candidates against job descriptions using a **hybrid AI scoring approach**.
 
-Intelligent resume-to-job matching for HR teams
+The system is designed with **performance, scalability, and real-world production use cases** in mind.
 
-Market insights using SERP data + RAG
+---
 
-Scalable, non-blocking ML processing
+## ✨ **Key Features**
 
-✨ Features
-👤 For Job Seekers
+### 👤 **For Job Seekers**
+- 📤 Upload and analyze resumes (PDF)
+- 🧠 AI-generated improvement feedback
+- 📊 Skill matching and similarity scores
+- 🕒 Resume analysis history tracking
+- 📈 **Market Analysis** using Google SERP API + RAG insights
 
-Upload and analyze resumes (PDF)
+### 🧑‍💼 **For HR Professionals**
+- 📝 Upload detailed job descriptions
+- 🏆 AI-powered resume ranking
+- ⚖️ Multiple scoring algorithms:
+  - Skill Match
+  - TF-IDF Similarity
+  - BERT Semantic Similarity
+- 🔍 View matched skills per candidate
+- 📄 Direct resume access via stored links
 
-Get AI-generated improvement feedback
+---
 
-View skill matching scores
+## 🧠 **Scoring Algorithm**
 
-Track resume analysis history
+A **hybrid weighted scoring model** ensures both **keyword accuracy** and **semantic understanding**:
 
-Market analysis using Google SERP + RAG insights
+| Algorithm | Weight |
+|---------|--------|
+| **Skill Matching (spaCy)** | **50%** |
+| **BERT Similarity (Sentence Transformers)** | **30%** |
+| **TF-IDF Similarity** | **20%** |
 
-🧑‍💼 For HR Professionals
+---
 
-Upload job descriptions
+## 🏗️ **System Architecture**
 
-Find top matching resumes
+The application follows a **Three-Tier Architecture**:
 
-AI-powered candidate ranking
+### **1️⃣ Presentation Tier**
+- ⚛️ React 19 frontend
+- 🔐 JWT-based authentication
+- 🧠 Zustand for global state management
 
-Multiple scoring algorithms:
+### **2️⃣ Application Tier**
+- ⚡ FastAPI backend
+- 🧩 Modular router-based design
+- 🧵 Non-blocking ML execution using **ThreadPoolExecutor**
+- 🚀 Parallel resume processing using **asyncio.gather**
 
-Skill Match
+### **3️⃣ Data Tier**
+- 🗄️ MongoDB with singleton connection pooling
+- ☁️ Cloudinary for PDF storage
+- 🤖 Groq LLM API for AI feedback
+- 🌍 Google SERP API for market insights
 
-TF-IDF Similarity
+---
 
-BERT Semantic Similarity
+## 🛠️ **Technology Stack**
 
-View matched skills and resume links
+### 🎨 **Frontend**
+- React 19
+- React Router
+- Zustand
+- Axios
+- Tailwind CSS
+- Framer Motion
+- React Hot Toast
 
-🧠 Scoring Algorithm
+### ⚙️ **Backend**
+- FastAPI
+- Uvicorn (ASGI)
+- MongoDB (motor + pymongo)
+- Pydantic
+- JWT (python-jose, bcrypt, passlib)
 
-The system uses a hybrid weighted scoring model:
+### 🧠 **ML & NLP**
+- spaCy (`en_core_web_sm`)
+- Sentence Transformers (MiniLM)
+- scikit-learn (TF-IDF)
+- FAISS (vector search)
+- PyMuPDF (PDF parsing)
+- NumPy, PyTorch
 
-Algorithm	Weight
-Skill Matching (spaCy)	50%
-BERT Similarity (Sentence Transformers)	30%
-TF-IDF Similarity	20%
+### 🌐 **External Services**
+- **Cloudinary** – Resume storage
+- **Groq API (LLaMA 3.3 70B)** – AI feedback
+- **Google SERP API** – Market analysis
 
-This ensures both keyword precision and semantic relevance.
+---
 
-🏗️ Architecture Overview
+## ⚡ **Performance & Scalability**
 
-The application follows a three-tier architecture:
+- ✅ Non-blocking FastAPI event loop
+- 🔁 ThreadPoolExecutor for CPU-heavy ML tasks
+- 🚀 **20× faster** HR matching via parallel processing
+- 🔌 MongoDB connection pooling (min 10, max 50)
+- ♻️ Graceful startup & shutdown lifecycle handling
 
-1️⃣ Presentation Tier
-
-React 19 frontend
-
-Client-side routing & state management
-
-Secure JWT-based authentication
-
-2️⃣ Application Tier
-
-FastAPI backend
-
-Modular router-based design
-
-Non-blocking ML execution using ThreadPoolExecutor
-
-Parallel resume processing using asyncio.gather
-
-3️⃣ Data Tier
-
-MongoDB with connection pooling (singleton pattern)
-
-Cloudinary for PDF storage
-
-Groq LLM API for AI feedback
-
-Google SERP API for market insights
-
-🛠️ Technology Stack
-Frontend
-
-React 19
-
-React Router
-
-Zustand
-
-Axios
-
-Tailwind CSS
-
-Framer Motion
-
-React Hot Toast
-
-Backend
-
-FastAPI
-
-Uvicorn
-
-MongoDB (motor + pymongo)
-
-Pydantic
-
-JWT (python-jose, bcrypt, passlib)
-
-ML & NLP
-
-spaCy (en_core_web_sm)
-
-Sentence Transformers (MiniLM)
-
-scikit-learn (TF-IDF)
-
-FAISS (vector search)
-
-PyMuPDF (PDF parsing)
-
-NumPy, Torch
-
-External Services
-
-Cloudinary – Resume storage
-
-Groq API (LLaMA 3.3 70B) – AI feedback
-
-Google SERP API – Market analysis
+---
 
 ## Quick Start
 
