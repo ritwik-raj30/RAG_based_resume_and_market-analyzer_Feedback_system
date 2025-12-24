@@ -1,39 +1,143 @@
-# Resume Matcher Optimizer Tracker
+An AI-powered resume analysis and matching system designed to help job seekers improve resumes and HR professionals find the best candidates efficiently using modern NLP and ML techniques.
 
-A comprehensive resume analysis and matching system that helps HR professionals find the best candidates for job positions using AI-powered analysis.
+🚀 Overview
 
-## Features
+Resume Matcher Optimizer Tracker analyzes resumes, extracts skills, evaluates semantic relevance, and ranks candidates against job descriptions using a hybrid AI scoring system.
 
-### For Job Seekers
-- Upload and analyze resumes
-- Get detailed feedback and improvement suggestions
-- Track analysis history
-- View skill matching scores
-- MARKET ANALYSIS - uses google serp api to get job data  leverage RAG to provide market insights 
+The platform supports:
 
-### For HR Professionals
-- Find the best matching resumes for job descriptions
-- AI-powered candidate ranking
-- Multiple scoring algorithms (Skill Match, TF-IDF, BERT)
-- Detailed candidate profiles with matched skills
+Resume analysis & feedback for job seekers
 
-## Tech Stack
+Intelligent resume-to-job matching for HR teams
 
-### Backend
-- **FastAPI** - Modern Python web framework
-- **MongoDB** - NoSQL database for storing resumes and user data
-- **spaCy** - NLP library for text processing
-- **Sentence Transformers** - BERT-based similarity scoring
-- **scikit-learn** - TF-IDF vectorization
-- **PyMuPDF** - PDF text extraction
+Market insights using SERP data + RAG
 
-### Frontend
-- **React 19** - Modern React with hooks
-- **React Router** - Client-side routing
-- **Axios** - HTTP client for API calls
-- **React Hot Toast** - User notifications
-- **Zustand** - State management
-- **Tailwind CSS v-3"-for frontend appearance 
+Scalable, non-blocking ML processing
+
+✨ Features
+👤 For Job Seekers
+
+Upload and analyze resumes (PDF)
+
+Get AI-generated improvement feedback
+
+View skill matching scores
+
+Track resume analysis history
+
+Market analysis using Google SERP + RAG insights
+
+🧑‍💼 For HR Professionals
+
+Upload job descriptions
+
+Find top matching resumes
+
+AI-powered candidate ranking
+
+Multiple scoring algorithms:
+
+Skill Match
+
+TF-IDF Similarity
+
+BERT Semantic Similarity
+
+View matched skills and resume links
+
+🧠 Scoring Algorithm
+
+The system uses a hybrid weighted scoring model:
+
+Algorithm	Weight
+Skill Matching (spaCy)	50%
+BERT Similarity (Sentence Transformers)	30%
+TF-IDF Similarity	20%
+
+This ensures both keyword precision and semantic relevance.
+
+🏗️ Architecture Overview
+
+The application follows a three-tier architecture:
+
+1️⃣ Presentation Tier
+
+React 19 frontend
+
+Client-side routing & state management
+
+Secure JWT-based authentication
+
+2️⃣ Application Tier
+
+FastAPI backend
+
+Modular router-based design
+
+Non-blocking ML execution using ThreadPoolExecutor
+
+Parallel resume processing using asyncio.gather
+
+3️⃣ Data Tier
+
+MongoDB with connection pooling (singleton pattern)
+
+Cloudinary for PDF storage
+
+Groq LLM API for AI feedback
+
+Google SERP API for market insights
+
+🛠️ Technology Stack
+Frontend
+
+React 19
+
+React Router
+
+Zustand
+
+Axios
+
+Tailwind CSS
+
+Framer Motion
+
+React Hot Toast
+
+Backend
+
+FastAPI
+
+Uvicorn
+
+MongoDB (motor + pymongo)
+
+Pydantic
+
+JWT (python-jose, bcrypt, passlib)
+
+ML & NLP
+
+spaCy (en_core_web_sm)
+
+Sentence Transformers (MiniLM)
+
+scikit-learn (TF-IDF)
+
+FAISS (vector search)
+
+PyMuPDF (PDF parsing)
+
+NumPy, Torch
+
+External Services
+
+Cloudinary – Resume storage
+
+Groq API (LLaMA 3.3 70B) – AI feedback
+
+Google SERP API – Market analysis
 
 ## Quick Start
 
